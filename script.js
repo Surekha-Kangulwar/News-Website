@@ -39,13 +39,24 @@ const generateUI = (articles) => {
 //News API Call
 const getNews = async () => {
   container.innerHTML = "";
-  let response = await fetch(requestURL);
-  if (!response.ok) {
-    alert("Data unavailable at the moment. Please try again later");
-    return false;
+  try {
+    let response = await fetch(requestURL, {
+      headers: {
+        // Add any necessary headers here, e.g., for CORS
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error("Data unavailable at the moment. Please try again later");
+    }
+
+    let data = await response.json();
+    generateUI(data.articles);
+  } catch (error) {
+    console.error(error.message);
   }
-  let data = await response.json();
-  generateUI(data.articles);
 };
 
 //Category Selection
